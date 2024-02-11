@@ -188,6 +188,8 @@ void setup() {
   //Printing IP Address
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
+   // Show IP Address On MAX Display Matrix FC16_HW
+  showIPAddress(WiFi.localIP());
 
   // Start Web Server 
   server.on("/", HTTP_GET, []() {
@@ -263,4 +265,10 @@ void loop() {
   scrollDelay = getScrollDelay();
   //readSerial();
   scrollText();
+}
+
+void showIPAddress(IPAddress ip) {
+  String ipString = String(ip[0]) + "." + String(ip[1]) + "." + String(ip[2]) + "." + String(ip[3]);
+  mx.clear();
+  mx.print(ipString.c_str());
 }
