@@ -1,5 +1,5 @@
 #include "HID-Project.h"
-//#include <HID-Settings.h>
+#include <HID-Settings.h>
 
 #include <Adafruit_GFX.h>
 #include <MCUFRIEND_kbv.h>
@@ -281,7 +281,7 @@ void loop(void)
     Keyboard.press(KEY_LEFT_GUI);
     Keyboard.press('r');
     Keyboard.releaseAll();
-    delay(100);
+    delay(200);
     Keyboard.print("chrome github.com");
     Keyboard.press(KEY_RETURN);
     delay(100);
