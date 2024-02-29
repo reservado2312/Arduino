@@ -50,7 +50,7 @@ void testfillroundrect(void) {
 void introDot(void) {  
 
   for(int16_t i=0; i<display.width()-10; i+=1) {   
-    display.setTextSize(2);
+    display.setTextSize(4);
     display.setTextColor(SSD1306_WHITE);
     display.setCursor(i, i+10);  
     display.print("OwO");

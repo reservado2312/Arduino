@@ -50,8 +50,8 @@ void loop() {
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 5);
   display.println("Online");
-  display.setTextSize(0);
-  display.setCursor(80, 5);
+  display.setTextSize(2);
+  display.setCursor(70, 5);
   //localização exata para a hora no canto superior na direita
   display.print(timeinfo->tm_hour);
   display.print(':');

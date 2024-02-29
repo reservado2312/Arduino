@@ -20,7 +20,7 @@
 //#define DHTTYPE    DHT22     // DHT 22 (AM2302)
 //#define DHTTYPE    DHT21     // DHT 21 (AM2301)
 
-float temp = 0, humid = 0;
+
 // See guide for details on sensor wiring and usage:
 //   https://learn.adafruit.com/dht/overview
 
