@@ -1,0 +1,20 @@
+O modulo Touch TTP 223 funciona de 4 formas diferentes
+Configuração 1:
+Para obter a configuração um, ambos os terminais A e B devem estar na posição aberta.
+O estado de saída padrão será BAIXO
+Muda o estado (para ALTO) quando um toque é detectado e volta ao estado padrão quando o toque é liberado
+
+Configuração 2:
+Para obter a configuração um, A deve estar na posição aberta e B na posição fechada.
+O estado de saída padrão será BAIXO
+Altera o estado quando um toque é detectado e permanece nesse estado até que outro toque seja detectado.
+
+Configuração 3:
+Para obter a configuração um, A deve estar fechado e B deve estar na posição aberta.
+O estado de saída padrão será ALTO
+Muda o estado (para BAIXO) quando um toque é detectado e volta ao estado padrão quando o toque é liberado
+
+Configuração 4:
+Para obter a configuração um, ambos os terminais A e B devem estar na posição fechada.
+O estado de saída padrão será ALTO
+Altera o estado quando um toque é detectado e permanece nesse estado até que outro toque seja detectado.
