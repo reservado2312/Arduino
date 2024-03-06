@@ -1,0 +1,10 @@
+Para criar arquivos de áudio MP3 contendo a pronúncia dos números de 1 a 10 em Python, você pode usar a biblioteca gTTS (Google Text-to-Speech). Primeiro, instale a biblioteca se ainda não o fez:
+
+
+Certifiquice de ter o Pythn devidamente instalado
+
+e Instale a Biblioteca usando o seguinte comando:
+pip install gTTS
+
+
+
