@@ -1,26 +1,22 @@
 
 #include <Adafruit_GFX.h>
 #include <MCUFRIEND_kbv.h>
+#include <SPI.h>            // f.k. for Arduino-1.5.2
+//#define USE_SDFAT
+#include <SD.h>   
 MCUFRIEND_kbv tft;
 #include <TouchScreen.h>
 
 #define MINPRESSURE 200
 #define MAXPRESSURE 1000
 
-// ALL Touch panels and wiring is DIFFERENT
-// copy-paste results from TouchScreen_Calibr_native.ino
-const int XP=8,XM=A2,YP=A3,YM=9; //240x320 ID=0x9341
-const int TS_LEFT=178,TS_RT=904,TS_TOP=937,TS_BOT=214;
-
+// primeiro display
+//const int XP=9,XM=A3,YP=A2,YM=8; //240x320 ID=0x9341
+//const int TS_LEFT=550,TS_RT=750,TS_TOP=647,TS_BOT=807;
 // Segundo Display
-
 //*** COPY-PASTE from Serial Terminal:
-//const int XP=8,XM=A2,YP=A3,YM=9; //240x320 ID=0x9341
-//const int TS_LEFT=276,TS_RT=826,TS_TOP=909,TS_BOT=167;
-
-//PORTRAIT  CALIBRATION     240 x 320
-//x = map(p.x, LEFT=276, RT=826, 0, 240)
-//y = map(p.y, TOP=909, BOT=167, 0, 320)
+const int XP=8,XM=A2,YP=A3,YM=9; //240x320 ID=0x9341
+const int TS_LEFT=305,TS_RT=831,TS_TOP=901,TS_BOT=174;
 
 //Randge Slider Setting
 const int X_RandgeSlider = 10, Y_RandgeSlider = 140, W_RandgeSlider = 220, H_RandgeSlider = 10;
@@ -28,30 +24,31 @@ const int X_RandgeSlider = 10, Y_RandgeSlider = 140, W_RandgeSlider = 220, H_Ran
 //Texts Settings
 
 //Time
-const int X_Time = 45, Y_Time = 10, Size_Time = 5;
+const int X_Time = 25, Y_Time = 10, Size_Time = 4;
   
 //Date
 const int X_Date = 30, Y_Date = 55, Size_Date = 3;
   
 //Temp
-const int X_Temp = 40, Y_Temp = 85, Size_Temp = 3;
+const int X_Temp = 10, Y_Temp = 85, Size_Temp = 3;
   
 //Humidity
-const int X_Humi = 45, Y_Humi = 120, Size_Humi = 2;
-  
-  
-  
+const int X_Humi = 30, Y_Humi = 120, Size_Humi = 2;
 
+//          X   Y   S
+//TIME
+//showmsgXY(45, 10, 5, "00:00");
+//DATE
+//showmsgXY(30, 55, 3, "00/00/0000");
+//TEMP
+//showmsgXY(40, 85, 3, "Temp 22 C");
+//Humidity
+//showmsgXY(50, 120, 2, "Humidity 00%");
 
-  //          X   Y   S
-  //TIME
-  //showmsgXY(45, 10, 5, "00:00");
-  //DATE
-  //showmsgXY(30, 55, 3, "00/00/0000");
-  //TEMP
-  //showmsgXY(40, 85, 3, "Temp 22 C");
-  //Humidity
-  //showmsgXY(50, 120, 2, "Humidity 00%");
+//BTN Settings
+bool btn1State = false;
+int long unsigned btn_delays = 0;
+
 
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
@@ -94,23 +91,23 @@ void setup()
   tft.setRotation(0);            //PORTRAIT
   tft.fillScreen(BLACK);
   //TIME
-  showmsgXY(X_Time, Y_Time, Size_Time, "00:00");
+  showmsgXY(X_Time, Y_Time, Size_Time, "00:00:00");
   //DATE
   showmsgXY(X_Date, Y_Date, Size_Date, "00/00/0000");
   //TEMP
-  showmsgXY(X_Temp, Y_Temp, Size_Temp, "Temp 22 C");
+  showmsgXY(X_Temp, Y_Temp, Size_Temp, "Temp 22.00 C");
   //Humidity
-  showmsgXY(X_Humi, Y_Humi, Size_Humi, "Humidity 00%");
+  showmsgXY(X_Humi, Y_Humi, Size_Humi, "Humidity 00.00%");
 //y = altura x = largura no modo portatil no retrado é ao contrario
   tft.fillRect(X_RandgeSlider, Y_RandgeSlider, W_RandgeSlider, H_RandgeSlider, RED);
   //falta adcionar os textos e integrar com o codigo Comando Serial para receber e enviar os dados pela seriaal
   //e controlar dispositivos/ler valores de variaveis
   Range_btn.initButton(&tft, 120, 180, 220, 30, WHITE, CYAN, BLACK, "LED", 2);
 
-  btn_1.initButton(&tft,  60, 230, 110, 40, WHITE, CYAN, BLACK, "RELE 1", 2);
-  btn_2.initButton(&tft, 180, 230, 110, 40, WHITE, CYAN, BLACK, "RELE 2", 2);  
-  btn_3.initButton(&tft,  60, 280, 110, 40, WHITE, CYAN, BLACK, "RELE 3", 2);
-  btn_4.initButton(&tft, 180, 280, 110, 40, WHITE, CYAN, BLACK, "RELE 4", 2);
+  btn_1.initButton(&tft,  60, 230, 120, 50, WHITE, BLACK, CYAN, "RELE 1 ON", 2);
+  btn_2.initButton(&tft, 180, 230, 120, 50, WHITE, BLACK, CYAN, "RELE 1 OFF", 2);  
+  btn_3.initButton(&tft,  60, 280, 120, 50, WHITE, BLACK, CYAN, "RELE 2 ON", 2);
+  btn_4.initButton(&tft, 180, 280, 120, 50, WHITE, BLACK, CYAN, "RELE 2 OFF", 2);
 
 
   btn_1.drawButton(false);
@@ -155,13 +152,13 @@ void ChamadaComando()
       {
         //De 5 espaços para centralizar a hora depois da data
         //DATE 21/03/2024
-        tft.fillRect(0, Y_Date, 240, 20, BLACK); //Apaga o que estiver escrito nessa cordenada
+        tft.fillRect(0, Y_Date, 240, 25, BLACK); //Apaga o que estiver escrito nessa cordenada
         showmsgXY(X_Date, Y_Date, Size_Date, acao.c_str());
         //showmsgXY(50, 60, 3, acao.c_str());
       } 
       else if (comando == "TEMP") 
       {
-        tft.fillRect(0, Y_Temp, 240, 20, BLACK);
+        tft.fillRect(0, Y_Temp, 240, 25, BLACK);
         char txTemp[10]; // Array to store Text, assuming numbers won't exceed 9 digits      
         strcpy(txTemp, acao.c_str());
         char msgTemp[10]; // Assuming the message won't exceed 50 characters
@@ -190,7 +187,7 @@ void ChamadaComando()
         strcpy(msgHumi, "Humidity ");
         strcpy(txHumi, acao.c_str());
         strcat(msgHumi, txHumi);
-        strcat(msgHumi, " %");
+        strcat(msgHumi, "%");
 
         tft.fillRect(0, Y_Humi, 240, 20, BLACK);
         showmsgXY(X_Humi, Y_Humi, Size_Humi, msgHumi);
@@ -211,14 +208,17 @@ void showmsgXY(int x, int y, int sz, const char *msg)
     int16_t x1, y1;
     uint16_t wid, ht;    
     tft.setCursor(x, y);
-    tft.setTextColor(GREEN);
+    tft.setTextColor(WHITE);
     tft.setTextSize(sz);
-    tft.print(msg);
-    delay(10);
+    tft.print(msg);    
 }
 
 void loop()
 {
+  //Serial.print("X ");
+  //Serial.println(pixel_x);
+  //Serial.print("y ");
+  //Serial.println(pixel_y);
   bool down = Touch_getXY();
   btn_1.press(down && btn_1.contains(pixel_x, pixel_y));
   btn_2.press(down && btn_2.contains(pixel_x, pixel_y));
@@ -239,31 +239,23 @@ void loop()
   if (btn_1.justPressed()) 
   {    
     btn_1.drawButton(true);
-    //tft.fillRect(0, 10, 240, 20, BLACK); //Apaga o que estiver escrito nessa cordenada
-    //showmsgXY(8, 10, 2 , "Botao 1 Pressionado");
-    Serial.println("BTN 1");
+    Serial.println("RELE1 ON");
   }
   if (btn_2.justPressed()) 
   {
     btn_2.drawButton(true);
-    //tft.fillRect(0, 10, 240, 20, BLACK); //Apaga o que estiver escrito nessa cordenada
-    //showmsgXY(8, 10, 2 , "Botao 2 Pressionado");
-    Serial.println("BTN 2");
+    Serial.println("RELE1 OFF");
   }
   
   if (btn_3.justPressed()) 
   {
     btn_3.drawButton(true);
-    //tft.fillRect(0, 10, 240, 20, BLACK); //Apaga o que estiver escrito nessa cordenada
-    //showmsgXY(8, 10, 2 , "Botao 3 Pressionado");
-    Serial.println("BTN 3");
+    Serial.println("RELE2 ON");
   }
   if (btn_4.justPressed()) 
   {
     btn_4.drawButton(true);
-    //tft.fillRect(0, 10, 240, 20, BLACK); //Apaga o que estiver escrito nessa cordenada
-    //showmsgXY(8, 10, 2 , "Botao 4 Pressionado");
-    Serial.println("BTN 4");
+    Serial.println("RELE2 OFF");
   }
   if (Range_btn.justPressed()) 
   {
@@ -284,13 +276,13 @@ void RangeOp1()
     //Serial.println(pixel_y);
     
 
-    tft.fillRect(X_RandgeSlider, Y_RandgeSlider, W_RandgeSlider, H_RandgeSlider, RED); //  Reset RandgeSlider
+    //tft.fillRect(X_RandgeSlider, Y_RandgeSlider, W_RandgeSlider, H_RandgeSlider, RED); //  Reset RandgeSlider
     Range_btn.drawButton(true); // Redraw the button you press
     int novoValor = map(pixel_x, 10, 229, 0, 179); // Map X for novo valor
     //There's a small margin that you have to calibrate according to the size of your button
     //The minimum and maximum size of the slide bar
     int larguraRetangulo = map(novoValor, 0, 179, 1, W_RandgeSlider); // Mapeia o novo valor para a largura do retângulo
-    tft.fillRect(X_RandgeSlider, Y_RandgeSlider, larguraRetangulo, H_RandgeSlider, WHITE); // Preenche o retângulo com a nova largura
+    //tft.fillRect(X_RandgeSlider, Y_RandgeSlider, larguraRetangulo, H_RandgeSlider, WHITE); // Preenche o retângulo com a nova largura
     int novoTexto = map(pixel_x, 10, 229, 0, 100); // Mapeia o valor da posição X para o novo texto
     char texto[4]; // Array to store Text
     sprintf(texto, "%d", novoTexto); // Convert Number to String

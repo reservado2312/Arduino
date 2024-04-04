@@ -1,6 +1,6 @@
-#define LED_PIN 13 // Pino do Primeiro LED
-#define RELE_1 8 // Pino do Primeito Rele
-#define RELE_2 9 // Pino do Segundo Rele
+#define LED_PIN 2 // Pino do Primeiro LED
+#define RELE_1 26 // Pino do Primeito Rele
+#define RELE_2 25 // Pino do Segundo Rele
 
 void setup() {
   pinMode(LED_PIN, OUTPUT); // Configura o Pino do LED como saída
@@ -74,6 +74,6 @@ void ChamadaComando()
       //Debug que Trata comando inexistente
       Serial.println("Comando: ");
       Serial.println(comando);
-      Serial.println("Inesistente!");
+      Serial.println("Inexistente!");
     }
 }
